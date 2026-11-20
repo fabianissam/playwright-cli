@@ -10,10 +10,8 @@ tools that the commands run.
 - **What is a copy:** `skills/playwright-cli/` is a copy of
   `packages/playwright-core/src/tools/skills/playwright-cli/`. `node scripts/update.js` refreshes
   it on a roll. Change it upstream.
-- **The pin:** `package.json` pins an alpha of `playwright` and `playwright-core`.
-  `npm view playwright-core@<alpha> gitHead` prints the upstream commit of an alpha, and
-  `npm view @playwright/cli@<version> dependencies.playwright-core` prints the alpha of a release.
-  The pin is older than the tip of upstream `main`.
+- **The pin:** this fork pins `patchright` and `patchright-core` 1.64.3. `playwright-cli.js`
+  loads that core, and `open` defaults to installed Chrome through `patchright.config.json`.
 - **Where a fix goes:** most bugs and features are upstream. Work in a checkout of
   `microsoft/playwright`, `~/code/playwright`, as its `AGENTS.md` says. The tests of
   the CLI are its `tests/mcp/cli-*.spec.ts`, with the `cli` fixture of `tests/mcp/cli-fixtures.ts`,

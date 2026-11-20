@@ -21,8 +21,8 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
-const { parseArgs, program } = require('playwright-core/lib/tools/cli-client/program');
-const coreBundle = require('playwright-core/lib/coreBundle');
+const { program } = require('patchright-core/lib/tools/cli-client/program');
+const coreBundle = require('patchright-core/lib/coreBundle');
 const { tools, registry } = coreBundle;
 const { checkInstalledSkills, frame } = require('./skillCheck');
 
@@ -30,10 +30,40 @@ const packageJson = require('./package.json');
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const UPDATE_CHECK_COMMANDS = new Set(['open', 'attach', 'list', 'install', 'install-browser']);
+const patchrightConfig = path.join(__dirname, 'patchright.config.json');
 
 main();
 
+function parseArgs(argv) {
+  const command = argv.find(arg => !arg.startsWith('-'));
+  return { _: command ? [command] : [], json: argv.includes('--json') };
+}
+
+function patchrightDefaults(argv) {
+  const positional = argv.filter(arg => !arg.startsWith('-'));
+  const command = positional[0];
+  if (command !== 'open' && command !== 'install-browser')
+    return argv;
+  const next = argv.slice();
+  if (command === 'install-browser' && positional.length === 1)
+    next.push('chrome');
+  if (command !== 'open')
+    return next;
+  const hasConfig = next.some(arg => arg === '--config' || arg.startsWith('--config='));
+  const browserFlag = next.findIndex(arg => arg === '--browser' || arg.startsWith('--browser='));
+  let browser;
+  if (browserFlag >= 0) {
+    const flag = next[browserFlag];
+    browser = flag.startsWith('--browser=') ? flag.slice('--browser='.length) : next[browserFlag + 1];
+  }
+  const localConfig = path.join(process.cwd(), '.playwright', 'cli.config.json');
+  if (!hasConfig && !fs.existsSync(localConfig) && (browser === undefined || browser === 'chrome'))
+    next.push(`--config=${patchrightConfig}`);
+  return next;
+}
+
 async function main() {
+  process.argv = [process.argv[0], process.argv[1], ...patchrightDefaults(process.argv.slice(2))];
   const argv = process.argv.slice(2);
   // Parsing can fail before the output mode is known, so start from the flag.
   let json = argv.includes('--json');

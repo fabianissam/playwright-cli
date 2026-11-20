@@ -1,0 +1,13 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "launchOptions": {
+      "channel": "chrome",
+      "headless": false,
+      "args": ["--do-not-de-elevate"]
+    },
+    "contextOptions": {
+      "viewport": null
+    }
+  }
+}

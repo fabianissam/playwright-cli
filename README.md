@@ -1,5 +1,7 @@
 # playwright-cli
 
+This fork drives the CLI with [Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright) (`patchright-core` 1.64.3). `open` launches the installed Google Chrome, headed, with `--do-not-de-elevate`, unless you pass `--browser`, `--config`, or a `.playwright/cli.config.json`. Install Chrome for Patchright with `node playwright-cli.js install-browser`.
+
 Playwright CLI with SKILLS
 
 ### Playwright CLI vs Playwright MCP
